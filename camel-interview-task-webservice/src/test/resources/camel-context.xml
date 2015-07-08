@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+           http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+
+    <!-- resolve dynamicly the port number from a system property -->
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" />
+    
+  <cxf:cxfEndpoint id="my_service"
+                   address="/camel-interview-task-webservice/webservices/incident"
+                   endpointName="s:MyEndpoint"
+                   serviceName="s:MyEndpointService"
+                   wsdlURL="META-INF/wsdl/my_service.wsdl"
+                   serviceClass="org.apache.camel.example.mine.MineEndpoint"
+                   xmlns:s="http://mine.example.camel.apache.org"/>
+
+  <bean id="MyBean" class="org.apache.camel.example.mine.MyRoutes"/>
+
+  <camel:camelContext id="camel">
+    <camel:routeBuilder ref="MyBean"/>
+  </camel:camelContext>
+</beans>
+

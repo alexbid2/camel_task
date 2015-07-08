@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://mine.example.camel.apache.org"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	targetNamespace="http://mine.example.camel.apache.org">
+
+    <!-- Type definitions for input- and output parameters for webservice -->
+    <wsdl:types>
+	<xs:schema targetNamespace="http://mine.example.camel.apache.org">
+		<xs:element name="inputMyInput">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element type="xs:string" name="MyBody" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="outputMyOutput">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element type="xs:string" name="code" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+		<xs:element name="outputHeader">
+			<xs:complexType name="myHeaders">
+				<xs:sequence>
+					<xs:element name="MyAction" type="xs:string" minOccurs="0" />
+				</xs:sequence>
+			</xs:complexType>
+			</xs:element>    
+        </xs:schema>
+    </wsdl:types>
+
+    <!-- Message definitions for input and output -->
+    <wsdl:message name="inputMine">
+        <wsdl:part name="in" element="tns:inputMyInput"/>
+    </wsdl:message>
+    <wsdl:message name="outputMine">
+        <wsdl:part name="out" element="tns:outputMyOutput"/>
+    </wsdl:message>
+    
+    <wsdl:message name="headerMine">
+      <wsdl:part name="header" element="outputHeader"/>
+    </wsdl:message>
+
+    <!-- Port (interface) definitions -->
+    <wsdl:portType name="MineEndpoint">
+        <wsdl:operation name="MyOperation">
+            <wsdl:input message="tns:inputMine"/>
+            <wsdl:output message="tns:outputMine"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <!-- Port bindings to transports and encoding - HTTP, document literal encoding is used -->
+    <wsdl:binding name="MyBinding" type="tns:MineEndpoint">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="MyOperation">
+            <soap:operation
+                    soapAction="http://mine.example.camel.apache.org/Mine"
+                    style="document"/>
+            <wsdl:input>
+                <soap:body parts="in" use="literal"/>
+                <soap:header use="literal" part="header" message="tns:headerMine"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="out" use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <!-- Service definition -->
+    <wsdl:service name="MyEndpointService">
+        <wsdl:port name="MyEndpoint" binding="tns:MyBinding">
+            <soap:address location="http://localhost:9080/webservices/mine"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>

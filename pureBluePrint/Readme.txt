@@ -1,0 +1,1 @@
+just copy to ServiceMix hotDeploy folder
